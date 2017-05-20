@@ -153,7 +153,6 @@ class Question(models.Model):
     content = RichTextField(blank=True, null=True, verbose_name=u"内容")
     questioner = models.ForeignKey(UserProfile, verbose_name=u"提问者")
     forum = models.ForeignKey(Forum, verbose_name=u"所属论坛")
-    video = models.ForeignKey(Video, verbose_name=u"所属视频", default='')
     type = models.ManyToManyField(Type, verbose_name=u"问题标签")
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='unsolved', verbose_name=u'问题状态')
     total_view = models.PositiveIntegerField(db_index=True, default=0, verbose_name=u"浏览量")

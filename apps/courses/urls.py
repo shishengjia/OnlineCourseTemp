@@ -27,7 +27,7 @@ urlpatterns = [
     url(r'^forum/(?P<forum_id>\d+)/task/$', ForumTaskView.as_view(), name="forum_task"),
     url(r'^forum/task_datail/(?P<task_id>\d+)/$', ForumTaskDetailView.as_view(), name="forum_task_detail"),
     url(r'^forum/(?P<forum_id>\d+)/add_task/$', ForumAddTaskView.as_view(), name="forum_add_task"),
-    url(r'^forum/(?P<forum_id>\d+)/(?P<video_id>\d+)/add_question/$', ForumAddQuestionView.as_view(),
+    url(r'^forum/(?P<forum_id>\d+)/add_question/$', ForumAddQuestionView.as_view(),
         name="forum_add_question"),
     url(r'^forum/question/(?P<question_id>\d+)/$', ForumQuestionDetailView.as_view(), name="forum_question_detail"),
     url(r'^forum/adopt_answer/(?P<answer_id>\d+)/$', AdoptAnswer.as_view(), name="forum_adopt_answer"),

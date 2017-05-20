@@ -11,8 +11,6 @@
             <ul  class="crumbs">
                 <li><a href="{% url 'index' %}">首页</a>></li>
                 <li><a href="{% url 'course:course_list' %}">公开课程</a>></li>
-                <li><a href="{% url 'course:course_video' video.id %}">课程章节</a>></li>
-                <li><a href="{% url 'course:course_video' video.id %}">{{ video.name }}</a>></li>
                 <li>提问</li>
             </ul>
         </div>
@@ -38,7 +36,7 @@
 
 {% block custom_content %}
     <div class="wp">
-    <form action="{% url 'course:forum_add_question' forum.id video.id %}" method="post">
+    <form action="{% url 'course:forum_add_question' forum.id%}" method="post">
         {{ form.as_p }}
         <div id="js-pub-container" class="issques clearfix js-form">
             <input type="submit" id="js-pl-submit" class="pub-btn" data-cid="452" value="提交问题">

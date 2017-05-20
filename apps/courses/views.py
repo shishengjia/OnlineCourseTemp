@@ -258,13 +258,10 @@ class CourseVideoView(View):
         # 根据ID找出对应的课程对象，并按热度排名，选出前3名
         relate_courses = Course.objects.filter(id__in=courses_ids).order_by("-click_nums")[:3]
 
-        forum = Forum.objects.get(course=course, is_recommended=True)
-
         return render(request, "course-play.html", {
             "course": course,
             "relate_courses": relate_courses,
             "video": video,
-            'forum': forum
         })
 
 
@@ -425,32 +422,27 @@ class ForumAddQuestionView(LoginRequiredMixin, View):
     """
     提交问题
     """
-    def get(self, request, forum_id, video_id):
+    def get(self, request, forum_id):
         form = AddQuestionForm()
-        video = Video.objects.get(id=video_id)
         forum = Forum.objects.get(id=forum_id)
         types = Type.objects.all()
         return render(request, 'forum-add-question.html', {'form': form,
                                                            'forum': forum,
-                                                           'video': video,
                                                            'types': types})
 
-    def post(self, request, forum_id, video_id):
+    def post(self, request, forum_id):
         form = AddQuestionForm(request.POST)
-        video = Video.objects.get(id=video_id)
         forum = Forum.objects.get(id=forum_id)
         if form.is_valid():
             question = form.save(commit=False)
             question.questioner = request.user
             question.forum = forum
-            question.video = video
             question.save()
             # 当保存的表单里多对多关系时，如果不是直接使用form的save方法，需要最后调用form的save_m2m方法
             form.save_m2m()
             return render(request, 'forum-home.html', {'forum': forum})
         return render(request, 'forum-add-question.html', {'form': form,
-                                                           'forum': forum,
-                                                           'video': video})
+                                                           'forum': forum})
 
 
 class ForumQuestionDetailView(LoginRequiredMixin, View):
