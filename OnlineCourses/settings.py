@@ -138,10 +138,6 @@ USE_TZ = False
 # https://docs.djangoproject.com/en/1.9/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = '/static/'
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "static")
-]
 # 配置发送邮件服务
 
 EMAIL_HOST = "smtp.sina.cn"
@@ -154,7 +150,7 @@ EMAIL_FROM = "13419516267@sina.cn"
 # 设置资源存储的根路径
 MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
-# STATIC_ROOT = os.path.join(BASE_DIR, "static")
+STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
 # 配置redis
 REDIS_HOST = 'localhost'
