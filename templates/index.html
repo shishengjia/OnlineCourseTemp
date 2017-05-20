@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+
+<!--传递到这个页面的request会向上传递，所以可以在base.html里进行处理-->
+
+{% load staticfiles %} <!--模板里已经加载过，但是这里还是要加载一遍-->
+{% block title %}源学网 {% endblock %}
+<!--crumbs start-->
+
+
+
+{% block custom_content %}
+<!--module1 start-->
+	<section>
+		<div class="module">
+			<div class="wp">
+				<h1>公开课程</h1>
+				<div class="module1 eachmod">
+					<div class="module1_1 left">
+						<img width="228" height="614" src="/static/images/module1_1.jpg"/>
+						<p class="fisrt_word">专业课程<br/></p>
+						<a class="more" href="{% url 'course:course_list' %}">查看更多课程 ></a>
+					</div>
+					<div class="right group_list">
+
+                        {% for course in courses %}
+                            <div class="module1_8 box">
+                                <a href="{% url 'course:course_detail' course.id %}">
+                                    <img width="233" height="190" src="{{ MEDIA_URL }}{{ course.image }}"/>
+                                </a>
+                                <div class="des">
+                                    <a href="course-detail.html">
+                                        <h2 title="python入门2">{{ course.name }}</h2>
+                                    </a>
+                                    <span class="fl">难度：<i class="key">{{ course.get_level_display }}</i></span>
+                                    <span class="fr">学习人数：{{ course.student_nums }}</span>
+                                </div>
+                                <div class="bottom">
+                                    <span class="fl" title="慕课网666">{{ course.org.name }}</span>
+                                    <span class="star fr">{{ course.fav_nums }}</span>
+                                </div>
+                            </div>
+                        {% endfor %}
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+	<section>
+		<div class="module greybg">
+			<div class="wp">
+				<h1>课程机构</h1>
+				<div class="module3 eachmod">
+					<div class="module3_1 left">
+						<img width="228" height="463" src="/static/images/module3_1.jpg"/>
+						<p class="fisrt_word">中外名校<br/>培训机构</p>
+						<a class="more" href="{% url 'org:org_list' %}">查看更多机构 ></a>
+					</div>
+					<div class="right">
+						<ul>
+                                {% for org in orgs %}
+                                <li {% if forloop.counter|divisibleby:5 %}class="five"{% endif %}>
+                                    <a href="{% url 'org:org_home' org.id %}">
+                                        <div class="company">
+                                            <img width="184" height="100" src="{{ MEDIA_URL }}{{ org.image }}"/>
+                                            <div class="score">
+                                                <div class="circle">
+                                                    <h2>全国知名</h2>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <p><span class="key" title="慕课网">{{ org.name }}</span></p>
+                                    </a>
+                                </li>
+                                {% endfor %}
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+{% endblock %}
+

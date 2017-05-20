@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block custom_css %}
+    <link rel="stylesheet" href="{% static 'styles/github-gist.css' %}">
+    <link rel="stylesheet" href="{% static 'css/blog.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/muke/course/course-comment.css' %}" />
+{% endblock %}
+
+{% block custom_js2 %}
+    <script src="{% static 'js/highlight.pack.js' %}"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    <script type="text/javascript" src="{% static "ckeditor/ckeditor-init.js" %}"></script>
+    <script type="text/javascript" src="{% static "ckeditor/ckeditor/ckeditor.js" %}"></script>
+{% endblock %}
+
+{% block custom_bread %}
+<section>
+        <div class="wp">
+            <ul  class="crumbs">
+                <li><a href="{% url 'index' %}">首页</a>></li>
+                <li><a href="{% url 'course:forum_home' forum.id %}">论坛</a>></li>
+                <li><a href="{% url 'course:forum_blog' forum.id %}">手记</a>></li>
+                <li>{{ blog.title }}</li>
+            </ul>
+        </div>
+    </section>
+{% endblock %}
+
+{% block custom_content %}
+    <div id="content">
+        <h1>{{ blog.title }}</h1>
+        <br>
+        <p class="date" style="font-size: medium">
+            Published{{ blog.created_time }} by {{ blog.author.username }}<br>
+        </p>
+        <br>
+        <pre><code>{{ blog.body|safe }}</code></pre>
+        <br><br>
+        {% for comment in comments %}
+             <p style="font-size: small;color: #00B23B"># {{ forloop.counter }}&nbsp;&nbsp;&nbsp;by{{ comment.author.username }}</p>
+            <pre style="font-size: small"><code style="font-size: small">{{ comment.body|safe }}</code></pre>
+        {% empty %}
+            <p>暂时还没有人回复</p>
+        {% endfor %}
+        <br><br><br><br><br><br><br>
+        <form method="post" action="{% url 'course:blog:blog_detail' blog.id %}">
+            {{ form.as_p }}
+            <input type="submit" value="回复">
+            {% csrf_token %}
+        </form>
+    </div>
+
+
+{% endblock %}

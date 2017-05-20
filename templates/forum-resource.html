@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+
+<!--传递到这个页面的request会向上传递，所以可以在base.html里进行处理-->
+
+{% load staticfiles %} <!--模板里已经加载过，但是这里还是要加载一遍-->
+{% block title %}课程视频-源学网 {% endblock %}
+
+{% block custom_bread %}
+<section>
+        <div class="wp">
+            <ul  class="crumbs">
+                <li><a href="{% url 'index' %}">首页</a>></li>
+                <li><a href="{% url 'course:forum_list' %}">我的小组论坛</a>></li>
+                <li>{{ forum.name }}</li>
+            </ul>
+        </div>
+    </section>
+{% endblock %}
+
+
+{% block custom_css %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/muke/base.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'css/muke/common-less.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'css/muke/course/learn-less.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'css/aui.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'css/muke/course/course-comment.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'css/mooc.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'css/muke/course/common-less.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.min.css' %}">
+{% endblock %}
+
+{% block custom_content %}
+    <div id="main">
+    <div class="course-info-main clearfix w has-progress">
+
+        <div class="info-bar clearfix">
+        <div class="content-wrap clearfix">
+            <div class="content">
+                <div class="mod-tab-menu">
+                    <ul class="course-menu clearfix">
+                        <li><a href="{% url 'course:forum_home' forum.id %}"><span>问答</span></a></li>
+                        <li><a id="commentOn" class="active" href="{% url 'course:forum_resource' forum.id %}"><span>共享资源</span></a></li>
+                        <li><a id="commentOn" class="" href="{% url 'course:forum_blog' forum.id %}"><span>手记</span></a></li>
+                        <li><a id="commentOn" class="" href="{% url 'course:forum_task' forum.id %}"><span>课程任务</span></a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div id="course_note">
+            <a style="color: #00ad29;font-size: medium;margin-left: 2%" href="{% url 'course:forum_add_resource' forum.id%}">上传资源</a>
+            <ul class="mod-post" id="comment-list">
+                {% for resource in resources %}
+                    <li class="post-row">
+                        <div class="bd">
+                            <div class="tit">
+                                <a href="{{ MEDIA_URL }}{{ resource.file }}" class="downcode" target="_blank" download="" data-id="274" title="">{{ resource.name }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>
+                                <input type="hidden" id="{{ resource.id }}" value="{{ resource.id }}">
+                                {% if request.user.is_teacher %}
+                                <a class="btn btn-danger" href="{% url 'course:forum_delete_resource' resource.id%}" >{% ifequal resource.status 'unpublished' %}发布{% else %}撤销发布{% endifequal %}</a>
+                                {% endif %}
+                            </div>
+                            <p class="cnt" style="color: #00b43c">上传者: &nbsp;&nbsp;{{ resource.user.username }}</p>
+                            <div class="footer clearfix">
+                                <span title="上传时间" class="l timeago" style="color: #00ad29">时间：{{ resource.add_time|timesince }}前</span>
+                            </div>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+</div>
+</div>
+{% endblock %}
+

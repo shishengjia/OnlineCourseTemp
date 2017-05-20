@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+
+<!--传递到这个页面的request会向上传递，所以可以在base.html里进行处理-->
+
+{% load staticfiles %} <!--模板里已经加载过，但是这里还是要加载一遍-->
+{% block title %}公开课-源学网 {% endblock %}
+
+{% block custom_bread %}
+<section>
+        <div class="wp">
+            <ul  class="crumbs">
+                <li><a href="{% url 'index' %}">首页</a>></li>
+                <li>资讯</li>
+            </ul>
+        </div>
+    </section>
+{% endblock %}
+<!--crumbs start-->
+
+{% block custom_css %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/muke/base.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'css/muke/course/course-comment.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'css/aui.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'css/mooc.css' %}" />
+{% endblock %}
+
+{% block custom_content %}
+    <section>
+	<div class="wp">
+		<div class="list" style="margin-top:0;">
+			<div class="left layout">
+                <div class="listoptions">
+			<ul>
+				<li>
+					<h2>资讯分类</h2>
+					<div class="cont">
+                        <a href="?"><span class="{% ifequal type_id '' %}active2{% endifequal %}">全部</span></a>
+                            {% for type in all_type %}
+                                 <a href="?type={{ type.id }}&ct={{ category }}"><span class="{% ifequal type_id type.id|stringformat:"i" %}active2{% endifequal %}">{{ type.name }}</span></a>
+                            {% endfor %}
+					</div>
+				</li>
+			</ul>
+		</div>
+				<div class="head">
+					<ul class="tab_header">
+					    <li class="{% ifequal sort '' %}active2{% endifequal %}"><a href="?type={{ type_id }}">全部</a> </li>
+					    <li class="{% ifequal sort 'recommend' %}active2{% endifequal %}"><a href="?sort=recommend">推荐</a></li>
+                        <li class="{% ifequal sort 'hot' %}active2{% endifequal %}"><a href="?sort=hot&type={{ type_id }}">热度&#8595;</a> </li>
+				    </ul>
+				</div>
+                <div id="inWindow">
+                    <div class="tab_cont " id="content">
+                    <div id="course_note">
+                        <ul class="mod-post" id="comment-list">
+                            {% for news in newses.object_list %}
+                                <li class="post-row">
+                                    <div class="bd">
+                                        <div class="tit">
+                                            <a href="{% url 'news:news_track' news.id %}" target=_blank style="font-size: large">{{ news.title }}&nbsp;&nbsp;&nbsp;<span style="color: #00ad29">{{ news.type.name }}</span></a>
+                                        </div>
+                                        <p class="cnt" style="color: #99a5c2">{{ news.descp }}</p>
+                                        <div class="footer clearfix">
+                                            <span title="创建时间" class="l timeago" style="color: #00ad29">{{ news.created_time }}</span>
+                                            <span title="创建时间" class="l timeago" style="color: #00ad29">&nbsp;&nbsp;&nbsp;&nbsp;{{ news.view_nums }}&nbsp;浏览</span>
+                                        </div>
+                                    </div>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    <div class="pageturn">
+                        <ul class="pagelist">
+                            {% if newses.has_previous %}
+                             <li class="long"><a href="?{{ newses.previous_page_number.querystring }}">上一页</a></li>
+                            {% endif %}
+
+                             {% for page in newses.pages %}
+                                 {% if page %}
+                                    {% ifequal page newses.number %}
+                                        <li class="active"><a href="?{{ page.querystring }}">{{ page }}</a></li>
+                                    {% else %}
+                                         <li><a href="?{{ page.querystring }}" class="page">{{ page }}</a></li>
+                                     {% endifequal %}
+                                {% else %}
+                                    <li class="none"><a href="">...</a></li>
+                                {% endif %}
+                             {% endfor %}
+                            {% if newses.has_next %}
+                              <li class="long"><a href="?{{ newses.next_page_number.querystring }}">下一页</a></li>
+                             {% endif %}
+                        </ul>
+                    </div>
+				</div>
+                </div>
+			</div>
+			<div class="right layout">
+				<div class="head">热门资讯</div>
+				<div class="group_recommend">
+                    {% for news in hot_news %}
+                    <dl>
+						<dt>
+                            <a href="{% url 'news:news_track' news.id %}" target=_blank style="font-size: medium;color: black">{{ news.title }}</a>
+                            <p style="font-size: small;color: #99a5c2">{{ news.descp|truncatechars:30 }}</p>
+						</dt>
+					</dl>
+                    {% endfor %}
+				</div>
+			</div>
+		</div>
+	</div>
+    </section>
+{% endblock %}

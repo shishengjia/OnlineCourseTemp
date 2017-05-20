@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+<!--传递到这个页面的request会向上传递，所以可以在base.html里进行处理-->
+
+{% load staticfiles %} <!--模板里已经加载过，但是这里还是要加载一遍-->
+{% block title %}课程视频-源学网 {% endblock %}
+
+{% block custom_bread %}
+<section>
+        <div class="wp">
+            <ul  class="crumbs">
+                <li><a href="{% url 'index' %}">首页</a>></li>
+                <li><a href="{% url 'course:forum_home' forum.id%}">论坛</a>></li>
+                <li><a href="{% url 'course:forum_task' forum.id%}">课程任务</a>></li>
+                <li>添加课程任务</li>
+            </ul>
+        </div>
+    </section>
+{% endblock %}
+
+{% block custom_js2 %}
+        <script type="text/javascript" src="{% static "ckeditor/ckeditor-init.js" %}"></script>
+        <script type="text/javascript" src="{% static "ckeditor/ckeditor/ckeditor.js" %}"></script>
+{% endblock %}
+
+{% block custom_css %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/muke/base.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'css/muke/common-less.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'css/muke/course/learn-less.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'css/aui.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'css/mooc.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'css/muke/course/course-comment.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'css/muke/course/common-less.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/muke/video-js.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/mycss.css' %}">
+{% endblock %}
+
+{% block custom_content %}
+    <div class="wp">
+    <form action="{% url 'course:forum_add_task' forum.id %}" method="post">
+        {{ form.as_p }}
+        <div id="js-pub-container" class="issques clearfix js-form">
+            <input type="submit" id="js-pl-submit" class="pub-btn" data-cid="452" value="提交">
+        </div>
+        {% csrf_token %}
+    </form>
+    </div>
+    <br><br><br><br><br><br><br><br><br>
+{% endblock %}

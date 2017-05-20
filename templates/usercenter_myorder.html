@@ -1,0 +1,39 @@
+{% extends 'usercenter-base.html' %}
+{% load staticfiles %}
+{% block custom_title %}我的订单- 慕学在线网{% endblock %}
+
+{% block custom_bread %}
+        <section>
+            <div class="wp">
+                <ul  class="crumbs">
+                    <li><a href="{% url 'index' %}">首页</a>></li>
+                    <li><a href="{% url 'user:user_info' %}">个人中心</a>></li>
+                    <li>我的订单</li>
+                </ul>
+            </div>
+        </section>
+{% endblock %}
+
+{% block custom_content %}
+    <div class="right" >
+		<div class="personal_des Releasecont">
+			<div class="head">
+				<h1>我的订单</h1>
+			</div>
+		</div>
+
+		<div class="personal_des permessage">
+			<div class="messagelist">
+                    {% for order in orders %}
+                    <div class="messages">
+                        <div class="fr">
+                            <a style="font-size: medium; color: black" href="">
+                                {{ order.course.name }}&nbsp;&nbsp;({{ order.created_time }})
+                            </a>
+                        </div>
+                    </div>
+                    {% endfor %}
+			</div>
+		</div>
+	</div>
+{% endblock %}

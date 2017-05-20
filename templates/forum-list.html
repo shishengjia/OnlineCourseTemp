@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+<!--传递到这个页面的request会向上传递，所以可以在base.html里进行处理-->
+
+{% load staticfiles %} <!--模板里已经加载过，但是这里还是要加载一遍-->
+{% block title %}课程讲师-源学网 {% endblock %}
+
+{% block custom_bread %}
+<section xmlns="http://www.w3.org/1999/html">
+        <div class="wp">
+            <ul  class="crumbs">
+                <li><a href="{% url 'index' %}">首页</a>></li>
+                <li>我的小组论坛</li>
+            </ul>
+        </div>
+    </section>
+{% endblock %}
+<!--crumbs start-->
+
+{% block custom_content %}
+     <section>
+	<div class="wp butler_list_box list">
+	<div class='left'>
+		<div class="butler_list layout">
+			<div class="head">
+		    	</div>
+                {% for forum in forums %}
+                <dl class="des">
+					<dt>
+						<a href="{% url 'course:forum_home' forum.id%}">
+                            <div class="picpic">
+                                <img width="100" height="100" class="scrollLoading" src="{{ MEDIA_URL }}{{ forum.image }}"/>
+                            </div>
+                        </a>
+					</dt>
+					<dd>
+						<a href="{% url 'course:forum_home' forum.id%}">
+                            <h1>{{ forum.name }}&nbsp;&nbsp;&nbsp;&nbsp;<p style="color: orangered">{% if forum.is_recommended %}推荐{% endif %}</p></h1>
+                        </a>
+						<ul class="cont">
+							<li>小组人数：<span>{{ forum.get_student_nums }}</span></li>
+						</ul>
+					</dd>
+                </dl>
+                {% endfor %}
+		        </div>
+	</div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block custom_css %}
+    <link rel="stylesheet" href="{% static 'styles/googlecode.css' %}">
+    <link rel="stylesheet" href="{% static 'css/blog.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/muke/base.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'css/muke/common-less.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'css/muke/course/learn-less.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'css/aui.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'css/mooc.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'css/muke/course/course-comment.css' %}" />
+{% endblock %}
+
+{% block custom_bread %}
+<section>
+        <div class="wp">
+            <ul  class="crumbs">
+                <li><a href="{% url 'index' %}">首页</a>></li>
+                <li><a href="{% url 'course:forum_home' forum.id %}">论坛</a>></li>
+                <li>{{ task.title }}</li>
+            </ul>
+        </div>
+    </section>
+{% endblock %}
+
+{% block custom_content %}
+    <div id="content">
+        <h1>{{ task.title }}</h1>
+        <br>
+        <p class="date" style="font-size: medium">
+            Published{{ task.add_time }} <br>
+        </p>
+        <br>
+        <pre><code>{{ task.content|safe }}</code></pre>
+        <br><br>
+        {% for answer in task_answers %}
+             <p style="font-size: small;color: #00B23B"># {{ forloop.counter }}&nbsp;&nbsp;&nbsp;by{{ answer.answerer.username }}</p>
+            <pre><code style="font-size: large">{{ answer.answer|safe }}</code></pre>
+        {% empty %}
+            <p>暂时还没有人回复这个任务</p>
+        {% endfor %}
+        <br><br><br><br><br><br><br>
+        <form method="post" action="{% url 'course:forum_task_detail' task.id %}">
+            {{ form.as_p }}
+            <input type="submit" value="提交">
+            {% csrf_token %}
+        </form>
+        <br><br><br>
+    </div>
+{% endblock %}
+
+{% block custom_js2 %}
+    <script src="{% static 'js/highlight.pack.js' %}"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    <script type="text/javascript" src="{% static "ckeditor/ckeditor-init.js" %}"></script>
+    <script type="text/javascript" src="{% static "ckeditor/ckeditor/ckeditor.js" %}"></script>
+{% endblock %}

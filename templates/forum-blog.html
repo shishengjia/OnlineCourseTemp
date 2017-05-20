@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+
+<!--传递到这个页面的request会向上传递，所以可以在base.html里进行处理-->
+
+{% load staticfiles %} <!--模板里已经加载过，但是这里还是要加载一遍-->
+{% block title %}课程视频-源学网 {% endblock %}
+
+{% block custom_bread %}
+<section>
+        <div class="wp">
+            <ul  class="crumbs">
+                <li><a href="{% url 'index' %}">首页</a>></li>
+                <li><a href="{% url 'course:forum_list' %}">我的小组论坛</a>></li>
+                <li>{{ forum.name }}</li>
+            </ul>
+        </div>
+    </section>
+{% endblock %}
+
+
+{% block custom_css %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/muke/base.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'css/muke/common-less.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'css/muke/course/course-comment.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'css/muke/course/learn-less.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'css/aui.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'css/mooc.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'css/muke/course/common-less.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.min.css' %}">
+{% endblock %}
+
+{% block custom_content %}
+    <div id="main">
+    <div class="course-info-main clearfix w has-progress">
+
+        <div class="info-bar clearfix">
+        <div class="content-wrap clearfix">
+            <div class="content">
+                <div class="mod-tab-menu">
+                    <ul class="course-menu clearfix">
+                        <li><a class="" id="learnOn"  href="{% url 'course:forum_home' forum.id %}"><span>问答</span></a></li>
+                        <li><a id="commentOn" class="" href="{% url 'course:forum_resource' forum.id %}"><span>共享资源</span></a></li>
+                        <li><a id="commentOn" class="ui-tabs-active active" href="{% url 'course:forum_blog' forum.id %}"><span>手记</span></a></li>
+                        <li><a id="commentOn" class="" href="{% url 'course:forum_task' forum.id %}"><span>课程任务</span></a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div id="course_note">
+            <a style="color: #00ad29;font-size: medium;margin-left: 2%" href="{% url 'course:blog:blog_add' forum.id%}">添加我的手记</a>
+            <ul class="mod-post" id="comment-list">
+                {% for blog in blogs %}
+                    <li class="post-row">
+                        <div class="media">
+                            <span target="_blank"><img src='{{ MEDIA_URL }}{{ blog.author.image }}' width='40' height='40' /></span>
+                        </div>
+                        <div class="bd">
+                            <div class="tit">
+                                <a href="{% url 'course:blog:blog_detail' blog.id%}">{{ blog.title }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>
+                                {% if request.user.is_teacher %}
+                                <a class="btn btn-danger" href="{% url 'course:blog:delete_blog' blog.id %}">{% ifequal blog.status 'draft' %}发布{% else %}撤销发布{% endifequal %}</a>
+                                {% endif %}
+                            </div>
+                            <p class="cnt">{{ blog.author.username }}</p>
+                            <div class="footer clearfix">
+                                <span title="创建时间" class="l timeago" style="color: #00ad29">时间：{{ blog.publish_time|timesince }}前</span>
+                            </div>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+</div>
+</div>
+{% endblock %}
+

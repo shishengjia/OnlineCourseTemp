@@ -1,0 +1,127 @@
+{% extends 'base.html' %}
+
+<!--传递到这个页面的request会向上传递，所以可以在base.html里进行处理-->
+
+{% load staticfiles %} <!--模板里已经加载过，但是这里还是要加载一遍-->
+{% block title %}课程详情-源学网 {% endblock %}
+
+{% block custom_bread  %}
+<section>
+        <div class="wp">
+            <ul  class="crumbs">
+                <li><a href="{% url 'index' %}">首页</a>></li>
+                <li><a href="{% url 'course:course_list' %}">公开课程</a>></li>
+                <li>课程详情</li>
+            </ul>
+        </div>
+    </section>
+{% endblock %}
+
+{% block custom_content %}
+    <section>
+	<div class="wp">
+		<div class="groupPurchase_detail detail">
+			<div class="toppro">
+				<div class="left">
+					<div class="picbox">
+						<div class="tb-booth tb-pic">
+							<img width="440" height="445" src="{{ MEDIA_URL }}{{ course.image }}" class="jqzoom" />
+						</div>
+
+					</div>
+					<div class="des">
+						<h1 title="django 从入门到精通体验开始了">{{ course.name }}</h1>
+						<span class="key">{{ course.desc }}</span>
+						<div class="prize">
+							<span class="fl">难度：<i class="key">{{ course.get_level_display }}</i></span>
+							<span class="fr">学习人数：{{ course.student_nums }}</span>
+						</div>
+						<ul class="parameter">
+							<li><span class="pram word3">时&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;长：</span><span>{{ course.learning_time }}</span></li>
+                            <li><span class="pram word3">章&nbsp;节&nbsp;数：</span><span>{{ lesson_num }}</span></li>
+                            <li><span class="pram word3">价&nbsp;格：</span><span>{{ course.price }}</span></li>
+                            <!--学习用户，以后继续完善该功能-->
+{#							<li class="piclist"><span class="pram word4">学习用户：</span>#}
+{#                                    <span class="pic"><img width="40" height="40" src="../media/image/2016/12/default_big_14.png"/></span>#}
+{#							</li>#}
+						</ul>
+						<div class="btns">
+							<div class="btn colectgroupbtn"  id="jsLeftBtn">
+                                  {% if has_fav_course %}已收藏{% else %}收藏{% endif %}
+                            </div>
+                            <div class="buy btn"><a style="color: white" href="{% url 'course:course_info' course.id %}">开始学习</a></div>
+						</div>
+					</div>
+				</div>
+		</div>
+	</div>
+</section>
+    <section>
+	<div class="wp">
+		<div class="list groupPurchase_detail_pro">
+			<div class="left layout">
+				<div class="head">
+					<ul class="tab_header">
+						<li class="active">课程详情</li>
+					</ul>
+				</div>
+				<div class="tab_cont tab_cont1">
+                    <!--Django的安全机制，默认开启自动转义，防止js代码攻击，所以这里关闭自动转义，否则富文本内容无法正常显示-->
+					<p>{% autoescape off %}{{ course.details }}{% endautoescape %}</p>
+				</div>
+
+				<div class="tab_cont tab_cont2" >
+					<div class="comment">
+						<div class="comenlist">
+
+	                    </div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+{% endblock %}
+
+{% block custom_js2 %}
+    <script type="text/javascript" charset="utf-8" src="/extra_apps/DjangoUeditor/static/ueditor/ueditor.config.js"></script>
+    <script type="text/javascript" charset="utf-8" src="/extra_apps/DjangoUeditor/static/ueditor/ueditor.all.js"></script>
+    <script type="text/javascript" charset="utf-8" src="/extra_apps/DjangoUeditor/static/ueditor/lang/zh-cn/zh-cn.js"></script>
+
+<script type="text/javascript">
+//收藏分享
+function add_fav(current_elem, fav_id, fav_type){
+    $.ajax({
+        cache: false,
+        type: "POST",
+        url:"{% url 'org:add_fav' %}",
+        data:{'fav_id':fav_id, 'fav_type':fav_type},
+        async: true,
+        beforeSend:function(xhr, settings){
+            xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+        },
+        success: function(data) {
+            if(data.status == 'fail'){
+                if(data.msg == '用户未登陆'){
+                    window.location.href="{% url 'login' %}";
+                }else{
+                    current_elem.text(data.msg)
+                }
+
+            }else if(data.status == 'success'){
+                current_elem.text(data.msg)
+            }
+        },
+    });
+}
+
+$('#jsLeftBtn').on('click', function(){
+    add_fav($(this), {{ course.id }}, 1);
+});
+
+$('#jsRightBtn').on('click', function(){
+    add_fav($(this), {{ course.org.id }}, 2);
+});
+
+</script>
+{% endblock %}

@@ -1,0 +1,39 @@
+{% extends 'usercenter-base.html' %}
+{% load staticfiles %}
+{% block custom_title %}我的消息- 慕学在线网{% endblock %}
+
+{% block custom_bread %}
+        <section>
+            <div class="wp">
+                <ul  class="crumbs">
+                    <li><a href="{% url 'index' %}">首页</a>></li>
+                    <li><a href="{% url 'user:user_info' %}">个人中心</a>></li>
+                    <li>管理论坛</li>
+                </ul>
+            </div>
+        </section>
+{% endblock %}
+
+{% block custom_content %}
+    <div class="right" >
+		<div class="personal_des Releasecont">
+			<div class="head">
+				<h1>管理论坛</h1>
+			</div>
+		</div>
+
+		<div class="personal_des permessage">
+			<div class="messagelist">
+                    {% for forum in forums %}
+                    <div class="messages">
+                        <div class="fr">
+                            <a style="font-size: medium; color: black" href="{% url 'course:forum_home' forum.id %}">
+                                {{ forum.name }}&nbsp;&nbsp;({{ forum.course.name }})
+                            </a>
+                        </div>
+                    </div>
+                    {% endfor %}
+			</div>
+		</div>
+	</div>
+{% endblock %}

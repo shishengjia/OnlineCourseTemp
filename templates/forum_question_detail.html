@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block custom_css %}
+    <link rel="stylesheet" href="{% static 'styles/googlecode.css' %}">
+    <link rel="stylesheet" href="{% static 'css/blog.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/muke/base.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'css/muke/common-less.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'css/muke/course/learn-less.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'css/aui.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'css/mooc.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'css/muke/course/course-comment.css' %}" />
+{% endblock %}
+
+{% block custom_bread %}
+<section>
+        <div class="wp">
+            <ul  class="crumbs">
+                <li><a href="{% url 'index' %}">首页</a>></li>
+                <li><a href="{% url 'course:forum_home' forum.id %}">论坛</a>></li>
+                <li>{{ question.title }}</li>
+            </ul>
+        </div>
+    </section>
+{% endblock %}
+
+{% block custom_content %}
+    <div id="content">
+        <h1>{{ question.title }}</h1>
+        <br>
+        <p class="date" style="font-size: medium">
+            Published{{ question.created_time }} by {{ question.questioner.username }}<br>
+        </p>
+        <br>
+        <pre><code>{{ question.content|safe }}</code></pre>
+        <br><br>
+        {% if has_solved %}
+             <p style="font-size: small;color: #00B23B">
+                 by {{ best_answer.answerer.username }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                 <input type="submit" value="最佳答案" style="font-size: small;background-color: #00b43c">
+             </p>
+            <pre style="font-size: small"><code style="font-size: small">{{ best_answer.answer|safe }}</code></pre>
+            <br><br><br>
+        {% endif %}
+        {% for answer in answers %}
+             <form method="post" action="{% url 'course:forum_question_detail' question.id %}">
+                 <p style="font-size: small;color: #00B23B">
+                     # {{ forloop.counter }}&nbsp;&nbsp;&nbsp;by{{ answer.answerer.username }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                     <input type="hidden" name="answer_id" value="{{ answer.id }}">
+                     {% if not has_solved %}
+                     <input type="submit" value="采纳" style="font-size: small;background-color: #00b43c">
+                     {% endif %}
+                 </p>
+                {% csrf_token %}
+             </form>
+            <pre style="font-size: small"><code style="font-size: small">{{ answer.answer|safe }}</code></pre>
+            <br><br><br>
+        {% empty %}
+            <p>暂时还没有人回复这个任务</p>
+        {% endfor %}
+        <br><br><br><br><br><br><br>
+        <form method="post" action="{% url 'course:forum_question_detail' question.id %}">
+            {{ answer_form.as_p }}
+            <input type="submit" value="提交" style="background-color: #00b43c">
+            {% csrf_token %}
+        </form>
+        <br><br><br>
+    </div>
+{% endblock %}
+
+{% block custom_js2 %}
+    <script src="{% static 'js/highlight.pack.js' %}"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    <script type="text/javascript" src="{% static "ckeditor/ckeditor-init.js" %}"></script>
+    <script type="text/javascript" src="{% static "ckeditor/ckeditor/ckeditor.js" %}"></script>
+{% endblock %}
