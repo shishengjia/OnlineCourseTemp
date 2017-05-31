@@ -63,7 +63,7 @@
                             </div>
                             <p class="cnt">{{ blog.author.username }}</p>
                             <div class="footer clearfix">
-                                <span title="创建时间" class="l timeago" style="color: #00ad29">时间：{{ blog.publish_time|timesince }}前</span>
+                                <span title="创建时间" class="l timeago" style="color: #00ad29">时间：{{ blog.publish_time|timesince }}前 &nbsp;&nbsp;({{ blog.get_comment_nums }}评论)</span>
                             </div>
                         </div>
                     </li>

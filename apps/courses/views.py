@@ -4,7 +4,7 @@ from django.views.generic import View
 from django.http import HttpResponse, HttpResponseRedirect
 from django.db.models import Q
 from django.core.urlresolvers import reverse
-
+from django.http import HttpResponseRedirect
 from pure_pagination import Paginator, PageNotAnInteger
 
 from .models import Type, Course, Video, Forum, Question, Answer, ForumResource, Task
@@ -31,6 +31,12 @@ class CourseListView(View):
         # 搜索课程
         key_word = request.GET.get("key_word", "")
         if key_word:
+            types = Type.objects.filter(name__icontains=key_word)
+            # 追踪记录用户浏览记录
+            if request.user.is_authenticated:
+                r = Redis(request.user.username)
+                for item in types:
+                    r.increase(item.name, 1)
             all_course = all_course.filter(Q(name__icontains=key_word) | Q(desc__icontains=key_word))
         # 根据城市筛选，默认为空，表示选取所有机构
         type_id = request.GET.get("type", "")
@@ -174,7 +180,7 @@ class CourseInfoView(LoginRequiredMixin, View):
         # 从记录中遍历出相应课程ID（学过该门课的用户学过的其他课程的ID）
         courses_ids = [all_users_course.course.id for all_users_course in all_users_courses]
         # 根据ID找出对应的课程对象，并按热度排名，选出前3名
-        relate_courses = Course.objects.filter(id__in=courses_ids).order_by("-click_nums")[:3]
+        relate_courses = Course.objects.filter(id__in=courses_ids).exclude(id=course.id).order_by("-click_nums")[:3]
 
         return render(request, "course-video.html", {
             "course": course,
@@ -256,7 +262,7 @@ class CourseVideoView(View):
         # 从记录中遍历出相应课程ID（学过该门课的用户学过的其他课程的ID）
         courses_ids = [all_users_course.course.id for all_users_course in all_users_courses]
         # 根据ID找出对应的课程对象，并按热度排名，选出前3名
-        relate_courses = Course.objects.filter(id__in=courses_ids).order_by("-click_nums")[:3]
+        relate_courses = Course.objects.filter(id__in=courses_ids).exclude(id=course.id).order_by("-click_nums")[:3]
 
         return render(request, "course-play.html", {
             "course": course,
@@ -379,8 +385,8 @@ class ForumAddTaskView(View):
             task = form.save(commit=False)
             task.forum = forum
             form.save()
-            return render(request, 'forum_task.html', {'forum': forum})
-        return render(request, 'forum_task_add.html', {'form': form})
+            return HttpResponseRedirect('/course/forum/{}/task/'.format(forum_id))
+        return HttpResponseRedirect('/course/forum/{}/task/'.format(forum_id))
 
 
 class ForumTaskDetailView(View):
@@ -408,14 +414,8 @@ class ForumTaskDetailView(View):
             task_response.answerer = request.user
             # 保存
             task_response.save()
-            return render(request, 'forum_task_detail.html', {'task': task,
-                                                              'task_answers': task_answers,
-                                                              'forum': forum,
-                                                              'form': form})
-        return render(request, 'forum_task_detail.html', {'task': task,
-                                                          'task_answers': task_answers,
-                                                          'forum': forum,
-                                                          'form': form})
+            return HttpResponseRedirect('/course/forum/task_datail/{}/'.format(task_id))
+        return HttpResponseRedirect('/course/forum/task_datail/{}/'.format(task_id))
 
 
 class ForumAddQuestionView(LoginRequiredMixin, View):
@@ -440,7 +440,7 @@ class ForumAddQuestionView(LoginRequiredMixin, View):
             question.save()
             # 当保存的表单里多对多关系时，如果不是直接使用form的save方法，需要最后调用form的save_m2m方法
             form.save_m2m()
-            return render(request, 'forum-home.html', {'forum': forum})
+            return HttpResponseRedirect('/course/forum/{}/home/'.format(forum_id))
         return render(request, 'forum-add-question.html', {'form': form,
                                                            'forum': forum})
 
@@ -499,12 +499,7 @@ class ForumQuestionDetailView(LoginRequiredMixin, View):
             # 问题的状态置为已解决
             question.status = 'solved'
             question.save()
-            return render(request, 'forum_question_detail.html', {'answer_form': answer_form,
-                                                                  'question': question,
-                                                                  'answers': answers,
-                                                                  'forum': forum,
-                                                                  'has_solved': has_solved,
-                                                                  'best_answer': best_answer})
+            return HttpResponseRedirect('/course/forum/question/{}/'.format(question_id))
 
         if answer_form.is_valid():
             # 创建answer实例
@@ -514,18 +509,8 @@ class ForumQuestionDetailView(LoginRequiredMixin, View):
             # 赋予回答的用户
             answer.answerer = request.user
             answer.save()
-            return render(request, 'forum_question_detail.html', {'answer_form': answer_form,
-                                                                  'question': question,
-                                                                  'answers': answers,
-                                                                  'forum': forum,
-                                                                  'has_solved': has_solved,
-                                                                  'best_answer': best_answer})
-        return render(request, 'forum_question_detail.html', {'answer_form': answer_form,
-                                                              'question': question,
-                                                              'answers': answers,
-                                                              'forum': forum,
-                                                              'has_solved': has_solved,
-                                                              'best_answer': best_answer})
+            return HttpResponseRedirect('/course/forum/question/{}/'.format(question_id))
+        return HttpResponseRedirect('/course/forum/question/{}/'.format(question_id))
 
 
 class AdoptAnswer(View):

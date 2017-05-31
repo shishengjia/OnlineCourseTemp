@@ -1,6 +1,7 @@
 # -*- encoding: utf-8 -*-
 from django.shortcuts import render
 from django.views.generic import View
+from django.http import HttpResponseRedirect
 
 from .models import Blog
 from .forms import AddBlogForm, BlogCommentForm
@@ -33,22 +34,14 @@ class BlogDetailView(View):
     def post(self, request, blog_id):
         form = BlogCommentForm(request.POST)
         blog = Blog.objects.get(id=blog_id)
-        comments = blog.comments.all()
-        forum = blog.forum
         if form.is_valid():
             comment = form.save(commit=False)
             comment.blog = blog
             comment.author = request.user
             comment.save()
-            return render(request, 'forum-blog-detail.html', {'blog': blog,
-                                                              'form': form,
-                                                              'comments': comments,
-                                                              'forum': forum})
+            return HttpResponseRedirect('/course/blog/{}/'.format(blog_id))
 
-        return render(request, 'forum-blog-detail.html', {'blog': blog,
-                                                          'form': form,
-                                                          'comments': comments,
-                                                          'forum': forum})
+        return HttpResponseRedirect('/course/blog/{}/'.format(blog_id))
 
 
 class AddBlogView(View):
@@ -73,8 +66,7 @@ class AddBlogView(View):
             blog.forum = forum
             blog.save()
             form.save_m2m()
-            return render(request, 'forum-blog.html', {'forum': forum})
-
+            return HttpResponseRedirect('/course/forum/{}/blog/'.format(forum_id))
         return render(request, 'forum_blog_add.html', {'form': form,
                                                        'forum': forum})
 

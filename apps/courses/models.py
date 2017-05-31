@@ -220,6 +220,9 @@ class Task(models.Model):
         verbose_name = u"课程任务"
         verbose_name_plural = verbose_name
 
+    def get_task_response_nums(self):
+        return self.taskresponse_set.all().count()
+
 
 class TaskResponse(models.Model):
     answer = RichTextField(blank=True, null=True)

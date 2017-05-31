@@ -57,6 +57,7 @@
                             <div class="bd">
                                 <div class="tit">
                                     <a href="{% url 'course:forum_task_detail' task.id%}">{{ task.title }}</a>
+                                    <p style="color: #00b43c">({{ task.get_task_response_nums }}回复)</p>
                                 </div>
                             </div>
                         </li>

@@ -43,15 +43,11 @@
                               <a style="color:white" class="fr registerbtn" href="{% url 'register' %}">注册</a>
                               <a style="color:white" class="fr loginbtn" href="{% url 'login' %}">登录</a>
                         {% endif %}
-                         <a href="{% url 'user:user_system_message' %}">
-                            <div class="msg-num"><span>{{ request.user.get_unread_sys_message }}</span></div>
-                        </a>
 				</div>
 			</div>
 
             <div class="middle">
                 <div class="wp">
-                    <a href="{% url 'index' %}"><img class="fl" src="/static/images/logo.jpg"/></a>
                     <div class="searchbox fr">
                         <input id="search_keywords" class="fl" type="text" placeholder="搜索课程"/>
                         <img class="search_btn fr" id="jsSearchBtn" onclick="search_click" src="/static/images/search_btn.png"/>

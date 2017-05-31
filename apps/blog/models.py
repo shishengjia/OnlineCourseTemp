@@ -39,6 +39,9 @@ class Blog(models.Model):
     def __unicode__(self):
         return self.title
 
+    def get_comment_nums(self):
+        return self.comments.all().count()
+
 
 class BlogComment(models.Model):
     """
